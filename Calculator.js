@@ -9,7 +9,8 @@ var op = "/";
 //var clean_arr = in_arr.replace(/[^-()\d/*+.]/g, '');
 
 function add (x, y) {
-    return x + y;
+    console.log("using add function!");
+    return (x*100)/100 + (y*100)/100;
 }
 
 function subtract (x, y) {
@@ -95,10 +96,27 @@ function backspace () {
     })
 }
 
+function solve () {
+    const equal = document.querySelector('.equal');
+    equal.addEventListener('click', () => {
+        var a = input[0];
+        var b = `${input[1]}`;
+        var c = input[2];
+        console.log("a = " + a + " " + "b = " + b + " " + "c = " + c);
+        var solution = operate(a, c, b);
+        display.textContent = solution;
+        input = [];
+        strX = [];
+    
+    })
+}
+
+
+
 listen();
 clear();
 backspace ();
-
+solve();
 
 var solution = operate(x, y, op);
 console.log("operate = " + solution);
