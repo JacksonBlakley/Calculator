@@ -1,9 +1,8 @@
 var in_arr = "12/5*9+9.4*2";
 var input = [];
-var strX = []
-var x = 2;
-var y = 5;
-var op = "/";
+var strX = [];
+var cleanInput = [];
+var counter = 0;
 
 //strip anything other than digits, (), -+/* and . 
 //var clean_arr = in_arr.replace(/[^-()\d/*+.]/g, '');
@@ -22,7 +21,17 @@ function multiply (x, y) {
 }
 
 function divide (x, y) {
+    if(y == 0) {
+        input = [];
+        strX = [];
+        cleanInput = [];
+        counter = 0;
+        alert("Don't divide by zero. If you've figured out how to divide by zero, let us know.");
+        console.log('divide by zero');
+    }
+    else {
     return x / y;
+    }
 }
 
 function operate (x, y, operator) {
@@ -50,12 +59,13 @@ function listen() {
     allbtn.forEach((div) => {
     div.addEventListener('click', () => {
     var x = div.id;
-    strX.push(x);
-    var cleanInput = strX.join('');
+    strX = strX + x;
+    strX = parseInt(strX);
     const display = document.querySelector('#display');
-    display.textContent = cleanInput;
-    input = cleanInput;
-    console.log('input = ' + input);
+    display.textContent = cleanInput + strX;
+    console.log('tempX = ' + strX);
+    console.log(typeof strX);
+
     });
     }); 
 
@@ -63,11 +73,16 @@ function listen() {
     allOperand.forEach((div) => {
     div.addEventListener('click', () => {
     var y = div.id;
-    strX.push(y);
-    var cleanInput = strX.join('');
+    input[counter] = strX;
+    counter++;
+    input[counter] = y;
+    counter++;
+    cleanInput = input.join('');
     display.textContent = cleanInput;
-    input = cleanInput
+    strX = [];
     console.log('input = ' + input);
+    var checkInput = (input[0]);
+    console.log(checkInput);
     });
     }); 
 
@@ -81,17 +96,28 @@ function clear () {
     clearbtn.addEventListener('click', () => {
     input = [];
     strX = [];
+    cleanInput = [];
+    counter = 0;
     display.textContent = input;
     console.log('input = ' + input);
     })
 
 }
-
+//This doesn't work yet!
 function backspace () {
     const backspace = document.querySelector('.backspace');
     backspace.addEventListener('click', () => {
+    console.log("backspace = " + input);
+    if (strX != []) {
+        strX = Math.floor(strX/10);
+        console.log('StrX = ' + strX);
+    }
+    else {
     input = input.slice(0,-1);
-    display.textContent = input;
+    counter--;
+    }
+    cleanInput = input.join('');
+    display.textContent = cleanInput + strX;
     console.log('input = ' + input);
     })
 }
@@ -99,16 +125,37 @@ function backspace () {
 function solve () {
     const equal = document.querySelector('.equal');
     equal.addEventListener('click', () => {
-        var a = input[0];
-        var b = `${input[1]}`;
-        var c = input[2];
-        console.log("a = " + a + " " + "b = " + b + " " + "c = " + c);
-        var solution = operate(a, c, b);
-        display.textContent = solution;
+        input[counter] = strX;
+        console.log("solve input = " + input);
+        console.log('input length = ' + input.length);
+        for(var i = 0; i < input.length; i++) {
+            if (input[i] == '*' || input[i] == '/') {
+                console.log('multiply/divide');
+                var solution = operate(input[i - 1], input[i + 1], `${input[i]}`);
+                input.splice(i - 1, 3, solution);
+                console.log('new index = ' + input);
+                i = 0;
+            }}
+        for(var i = 0; i < input.length; i++) {
+            if (input[i] == '+' || input[i] == '-') {
+                console.log('add/subtract');
+                var solution = operate(input[i - 1], input[i + 1], `${input[i]}`);
+                input.splice(i - 1, 3, solution);
+                console.log('new index = ' + input);
+                i = 0;
+            }}
+        
+        display.textContent = input;
         input = [];
         strX = [];
+        cleanInput = [];
+        counter = 0;
+        console.log('clear index' + input);
+
     
     })
+
+ 
 }
 
 
@@ -118,5 +165,3 @@ clear();
 backspace ();
 solve();
 
-var solution = operate(x, y, op);
-console.log("operate = " + solution);
